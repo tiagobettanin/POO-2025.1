@@ -72,6 +72,36 @@ class Atendente {
         }
 };
 
+// ================== GERENCIAMENTO DE ATENDENTES ==================
+
+class AtendenteRegistro {
+    public:
+        string nome;
+        string senha;
+};
+
+
+Atendente* autenticarAtendente(vector<AtendenteRegistro> registros) {
+    string login, senhaEntrada;
+    cout << "Informe o login: ";
+    cin >> login;
+
+    for (auto reg : registros) {
+        if (reg.nome == login) {
+            cout << "Informe a senha: ";
+            cin >> senhaEntrada;
+            if (senhaEntrada == reg.senha) {
+                return new Atendente(reg.nome, reg.senha);
+            } else {
+                cout << "Senha incorreta!" << endl;
+                return nullptr;
+            }
+        }
+    }
+    cout << "Login inválido!" << endl;
+    return nullptr;
+}
+
 // ================== ESTRUTURA E SINGLETON DE RESERVAS ==================
 
 class Reserva {
@@ -233,35 +263,7 @@ void fazerReserva(Atendente* at) {
     }
 }
 
-// ================== GERENCIAMENTO DE ATENDENTES ==================
 
-class AtendenteRegistro {
-    public:
-        string nome;
-        string senha;
-};
-
-
-Atendente* autenticarAtendente(vector<AtendenteRegistro> registros) {
-    string login, senhaEntrada;
-    cout << "Informe o login: ";
-    cin >> login;
-
-    for (auto reg : registros) {
-        if (reg.nome == login) {
-            cout << "Informe a senha: ";
-            cin >> senhaEntrada;
-            if (senhaEntrada == reg.senha) {
-                return new Atendente(reg.nome, reg.senha);
-            } else {
-                cout << "Senha incorreta!" << endl;
-                return nullptr;
-            }
-        }
-    }
-    cout << "Login inválido!" << endl;
-    return nullptr;
-}
 
 // ================== MENU PRINCIPAL ==================
 
@@ -306,7 +308,7 @@ void gerarArquivo() {
     fprintf(arquivo, "\n=== Reservas realizadas ===\n");
 
     BancoDeReservas* banco = BancoDeReservas::getInstancia();
-    vector<Reserva>& reservas = banco->getReservas();  // supondo que você tenha esse método
+    vector<Reserva>& reservas = banco->getReservas(); 
 
     for (Reserva& r : reservas) {
         fprintf(arquivo, "Atendente: %s\nCliente: %s - CPF: %s\nLocal: %s, Quarto: %s\nCheck-in: %s, Diárias: %s\nDesconto: %s\nValor total: R$%s, Entrada: R$%s\nStatus: %s\n", 
