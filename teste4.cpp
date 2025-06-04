@@ -123,8 +123,8 @@ public:
 
     void reservar(Reserva r) {
         string chave = r.local + "_" + r.tipoQuarto + "_" + r.data;
-        ocupados.push_back(chave);
-        reservas.push_back(r);
+        this->ocupados.push_back(chave);
+        this->reservas.push_back(r);
     }
 
     void mostrarReservas() {
@@ -138,6 +138,10 @@ public:
                  << "Valor total: R$" << r.valorTotal << ", Entrada: R$" << r.entrada << "\n"
                  << "Status: " << (r.confirmada ? "Confirmada" : "Pendente") << "\n\n";
         }
+    }
+
+    vector<Reserva>& getReservas() {
+        return reservas;
     }
 };
 
@@ -229,13 +233,6 @@ void fazerReserva(Atendente* at) {
     }
 }
 
-// ================== CONTROLE PARA SAIR ==================
-
-void ctrlZ(int sinal) {
-    //fazer para gerar otxt
-    exit(0);
-}
-
 // ================== GERENCIAMENTO DE ATENDENTES ==================
 
 class AtendenteRegistro {
@@ -295,6 +292,35 @@ void menuPrincipal(Atendente* at) {
                 cout << "Opção inválida!\n";
         }
     }
+}
+
+// ================== CONTROLE PARA SAIR ==================
+
+void gerarArquivo() {
+    FILE *arquivo = fopen("dados.txt", "w");
+    if (arquivo == NULL) {
+        printf("Erro ao criar o arquivo!\n");
+        return;
+    }
+
+    fprintf(arquivo, "\n=== Reservas realizadas ===\n");
+
+    BancoDeReservas* banco = BancoDeReservas::getInstancia();
+    vector<Reserva>& reservas = banco->getReservas();  // supondo que você tenha esse método
+
+    for (Reserva& r : reservas) {
+        fprintf(arquivo, "Atendente: %s\nCliente: %s - CPF: %s\nLocal: %s, Quarto: %s\nCheck-in: %s, Diárias: %s\nDesconto: %s\nValor total: R$%s, Entrada: R$%s\nStatus: %s\n", 
+            r.atendente.c_str(), r.cliente.c_str(), r.cpf.c_str(), r.local.c_str(), r.tipoQuarto.c_str(), r.data.c_str(), to_string(r.diarias).c_str(), r.desc.c_str(), 
+            to_string(r.valorTotal).c_str(), to_string(r.entrada).c_str(), r.confirmada ? "Confirmada" : "Pendente");
+    }
+
+    fclose(arquivo);
+}
+
+
+void ctrlZ(int sinal) {
+    gerarArquivo();
+    exit(0);
 }
 
 // ================== FUNÇÃO MAIN ==================
