@@ -109,9 +109,10 @@ class Calendario{
         int calendario [12][31] = {0};
 
         Calendario(){
-            
+            calendario[2][30] = -1;
+            calendario[2][31] = -1;
         }
-}
+};
 
 // ================== ESTRUTURA E SINGLETON DE RESERVAS ==================
 
