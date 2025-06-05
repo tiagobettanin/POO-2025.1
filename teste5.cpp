@@ -102,6 +102,8 @@ Atendente* autenticarAtendente(vector<AtendenteRegistro> registros) {
     return nullptr;
 }
 
+//
+
 // ================== ESTRUTURA E SINGLETON DE RESERVAS ==================
 
 class Reserva {
