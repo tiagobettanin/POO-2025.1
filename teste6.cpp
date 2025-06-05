@@ -121,7 +121,25 @@ class Calendario{
             }
         }
 
-        void disponibilidadeCalendario(){
+        bool disponibilidadeCalendario(string data, int dias){
+            int dia = (data[0] - '0') * 10 + (data[1] - '0');
+            dia--;
+            int mes = (data[3] - '0') * 10 + (data[4] - '0');
+            mes--;
+
+            for(int i=0; i<dias; i++){
+                if(calendario[mes][dia] == 1){
+                    return false;
+                }else if(calendario[mes][dia] == 0){
+                    calendario[mes][dia] = 1;
+                    dia++;
+                }else if(calendario[mes][dia] == -1){
+                    i--;
+                    mes++;
+                    dia=0;
+                }
+            }
+            return true;
 
         }
 };
@@ -161,11 +179,14 @@ public:
 
     bool disponivel(string chave) {
         for (int i = 0; i < reservas.size(); ++i) {
-            string chaveReserva = reservas[i].local + "_" + reservas[i].tipoQuarto + "_" + reservas[i].data + to_string(reservas[i].diarias);
+            string chaveReserva = reservas[i].local + "_" + reservas[i].tipoQuarto + "_" + reservas[i].data;
 
             if (chaveReserva == chave && reservas[i].confirmada) {
-                
-                return false;
+                if(caldendario->disponibilidadeCalendario( reservas[i].data, reservas[i].diarias)){
+                    return false;
+                }
+                cout<< "Não foi possivel pois já temos uma reserva nos dias"<<endl;
+                return true;
             }
 
             if (chaveReserva == chave && !reservas[i].confirmada) {
@@ -257,7 +278,7 @@ public:
             else if (tipo == "Duplo") diaria = 300;
             else if (tipo == "Casal") diaria = 350;
 
-            string chave = local + "_" + tipo + "_" + data + "_" + to_string(diarias);
+            string chave = local + "_" + tipo + "_" + data;
 
             if (!disponivel(chave)) {
                 cout << ">> Quarto já reservado nessa data!\n";
