@@ -109,8 +109,20 @@ class Calendario{
         int calendario [12][31] = {0};
 
         Calendario(){
-            calendario[2][30] = -1;
-            calendario[2][31] = -1;
+            for(int i=0; i<12; i++){
+                if(i==1){
+                    calendario[i][29] = calendario[i][30] = calendario[i][31] =  -1;
+                }else if (i == 3 || i == 5 || i == 8 || i == 10) {
+                    calendario[i][30] = -1;
+                }
+                else {
+                    calendario[i][30] = calendario[i][31] =  -1;
+                }
+            }
+        }
+
+        void disponibilidadeCalendario(){
+
         }
 };
 
@@ -134,6 +146,7 @@ public:
 class BancoDeReservas {
 private:
     static BancoDeReservas* instancia;
+    Calendario *caldendario = new Calendario();
     vector<Reserva> reservas;
     vector<string> ocupados;
 
@@ -148,9 +161,10 @@ public:
 
     bool disponivel(string chave) {
         for (int i = 0; i < reservas.size(); ++i) {
-            string chaveReserva = reservas[i].local + "_" + reservas[i].tipoQuarto + "_" + reservas[i].data;
+            string chaveReserva = reservas[i].local + "_" + reservas[i].tipoQuarto + "_" + reservas[i].data + to_string(reservas[i].diarias);
 
             if (chaveReserva == chave && reservas[i].confirmada) {
+                
                 return false;
             }
 
@@ -243,7 +257,7 @@ public:
             else if (tipo == "Duplo") diaria = 300;
             else if (tipo == "Casal") diaria = 350;
 
-            string chave = local + "_" + tipo + "_" + data;
+            string chave = local + "_" + tipo + "_" + data + "_" + to_string(diarias);
 
             if (!disponivel(chave)) {
                 cout << ">> Quarto já reservado nessa data!\n";
