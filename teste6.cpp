@@ -217,10 +217,6 @@ public:
         }
     }
 
-    vector<Reserva>& getReservas() {
-        return reservas;
-    }
-
     void gerarArquivo() {
         FILE *arquivo = fopen("dados.txt", "w");
         if (arquivo == NULL) {
@@ -277,6 +273,8 @@ public:
             if (tipo == "Solteiro") diaria = 200;
             else if (tipo == "Duplo") diaria = 300;
             else if (tipo == "Casal") diaria = 350;
+            else if (tipo == "Triplo") diaria = 450;
+            else if (tipo == "Quadruplo" || tipo == "Quádruplo") diaria = 550;
 
             string chave = local + "_" + tipo + "_" + data;
 
