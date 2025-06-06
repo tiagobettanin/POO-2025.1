@@ -103,42 +103,53 @@ Atendente* autenticarAtendente(vector<Atendente>& atendentes) {
 
 class Calendario{
     public:
-        int calendario [12][31] = {0};
+        int calendario [12][31] = {};
 
         Calendario(){
+            for (int i = 0; i < 12; i++) {
+                for (int j = 0; j < 31; j++) {
+                    calendario[i][j] = 0; 
+                }
+            }
+            
             for(int i=0; i<12; i++){
                 if(i==1){
-                    calendario[i][29] = calendario[i][30] = calendario[i][31] =  -1;
-                }else if (i == 3 || i == 5 || i == 8 || i == 10) {
+                    calendario[i][28] = -1;
+                    calendario[i][29] = -1;
                     calendario[i][30] = -1;
+                }else if (i == 3 || i == 5 || i == 8 || i == 10) {
+                    calendario[i][29] = -1;
                 }
                 else {
-                    calendario[i][30] = calendario[i][31] =  -1;
+                    calendario[i][29] = -1;
+                    calendario[i][30] = -1;
                 }
             }
         }
 
-        bool disponibilidadeCalendario(string data, int dias){
+        bool disponibilidadeCalendario(string data, int dias) {
             int dia = (data[0] - '0') * 10 + (data[1] - '0');
             dia--;
             int mes = (data[3] - '0') * 10 + (data[4] - '0');
             mes--;
-
-            for(int i=0; i<dias; i++){
-                if(calendario[mes][dia] == 1){
+        
+            for (int i = 0; i < dias; i++) {
+                if (mes >= 12 || dia >= 31 || calendario[mes][dia] == 1) {
                     return false;
-                }else if(calendario[mes][dia] == 0){
+                }
+                if (calendario[mes][dia] == 0) {
                     calendario[mes][dia] = 1;
                     dia++;
-                }else if(calendario[mes][dia] == -1){
+                }
+                if (dia >= 31 || calendario[mes][dia] == -1) {
                     i--;
                     mes++;
-                    dia=0;
+                    dia = 0;
                 }
             }
             return true;
-
         }
+
 };
 
 // ================== SINGLETON: RESERVAS ==================
@@ -175,25 +186,25 @@ public:
     }
 
     bool disponivel(string chave) {
-        for (int i = 0; i < reservas.size(); ++i) {
-            string chaveReserva = reservas[i].local + "_" + reservas[i].tipoQuarto + "_" + reservas[i].data;
+    for (int i = 0; i < reservas.size(); ++i) {
+        string chaveReserva = reservas[i].local + "_" + reservas[i].tipoQuarto + "_" + reservas[i].data;
 
-            if (chaveReserva == chave && reservas[i].confirmada) {
-                if(caldendario->disponibilidadeCalendario( reservas[i].data, reservas[i].diarias)){
-                    return false;
-                }
-                cout<< "Não foi possivel pois já temos uma reserva nos dias"<<endl;
+        if (chaveReserva == chave) {
+            if (reservas[i].confirmada) {
+                cout << "Não foi possível pois já temos uma reserva confirmada para esses dias." << endl;
                 return true;
-            }
-
-            if (chaveReserva == chave && !reservas[i].confirmada) {
-                cout << "Avisar o cliente " << reservas[i].cliente << "com o cpf " << reservas[i].cpf << " que a reserva dele foi cancelada" <<endl;
+            }else if(!caldendario->disponibilidadeCalendario(reservas[i].data, reservas[i].diarias)){
+                return true;
+            } else {
+                cout << "Avisar o cliente " << reservas[i].cliente << " com o cpf " << reservas[i].cpf << " que a reserva dele foi cancelada" << endl;
                 reservas[i].cliente = "Reserva Cancelada por falta de pagamento";
-                return true;
             }
         }
-        return true;
     }
+    
+    return false;
+}
+
 
     void reservar(Reserva r) {
         string chave = r.local + "_" + r.tipoQuarto + "_" + r.data;
