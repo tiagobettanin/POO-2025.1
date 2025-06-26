@@ -86,7 +86,7 @@ Atendente* autenticarAtendente(vector<Atendente>& atendentes) {
             cin >> senhaEntrada;
 
             if (atendente.autenticar(senhaEntrada)) {
-                return &atendente; // Retorna ponteiro para o objeto autenticado
+                return &atendente;
             } else {
                 cout << "Senha incorreta!" << endl;
                 return nullptr;
